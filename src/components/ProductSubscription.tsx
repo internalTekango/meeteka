@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Search, Filter, X } from "lucide-react";
+import { Search, Filter, X, Plus, PlusCircle } from "lucide-react";
 import { useFetchData } from "../../hooks/useFetchData";
 import { LoadingCard } from "../components/LoadingCard";
 import { EmptyState } from "../components/EmptyState";
@@ -8,6 +8,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "../context/LanguageContext";
 import CardMission from "../components/card/mission";
 import { LEVELS } from "../../config";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 
 interface FilterButtonProps {
   label: string;
@@ -57,7 +64,9 @@ const FilterSection: React.FC<{
 
 export default function ProductSubscription() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [missions, setMissions] = useState<any[]>([]);
+  const [entrepriseLevelFilter, setEntrepriseLevelFilter] =
+    useState<string>("");
+  const [entrepriseLevel, setEntrepriseLevel] = useState<any[]>([]);
   const [selectedType, setSelectedType] = useState("Tous");
   const [selectedLevel, setSelectedLevel] = useState("Tous");
   const [showFilters, setShowFilters] = useState(false);
@@ -70,7 +79,7 @@ export default function ProductSubscription() {
     (async function () {
       const { data } = await fetchDiffusions({}, "POST");
       if (data?.data) {
-        setMissions(data.data);
+        // setMissions(data.data);
       }
     })();
   }, []);
@@ -164,123 +173,174 @@ export default function ProductSubscription() {
                       <X className="w-4 h-4 text-gray-400" />
                     </button>
                   )} */}
-                  <h1>Ajouter une entreprise</h1>
+                  <h1 className="flex items-center gap-4 font-bold">
+                    {" "}
+                    <PlusCircle className="w-4 h-4 md:w-6 md:h-6" />
+                    Ajouter une entreprise
+                  </h1>
                 </div>
-
-                {/* <div className="w-fit hidden">
-                  <button
-                    onClick={() => setShowFilters(!showFilters)}
-                    className="flex items-center gap-2 px-4 py-3 bg-black text-white rounded-xl hover:bg-highlight transition-all duration-300 sm:w-auto w-full justify-center group"
-                  >
-                    <Filter className="w-5 h-5 group-hover:rotate-180 transition-transform duration-300" />
-                    <span>{showFilters ? 'Masquer les filtres' : 'Afficher les filtres'}</span>
-                  </button>
-                </div> */}
               </div>
 
-              {/* Extended Filters */}
-              <AnimatePresence>
-                {/* {showFilters && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="overflow-hidden"
-                  >
-                    <div className="bg-gray-50 rounded-xl p-6 space-y-6 border-2 border-black/5">
-                      <FilterSection
-                        title="Niveau"
-                        options={LEVELS}
-                        selected={selectedLevel}
-                        onChange={setSelectedLevel}
-                      />
-                    </div>
-                  </motion.div>
-                )} */}
-              </AnimatePresence>
-
               {/* Active Filters */}
-              <AnimatePresence>
-                {/* {hasActiveFilters && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="flex flex-wrap items-center gap-2"
-                  >
-                    <span className="text-sm text-gray-500">
-                      Filtres actifs:
-                    </span>
-
-                    {selectedType !== "Tous" && (
-                      <ActiveFilterPill
-                        label={selectedType}
-                        onRemove={() => setSelectedType("Tous")}
-                      />
-                    )}
-                    {selectedLevel !== "Tous" && (
-                      <ActiveFilterPill
-                        label={selectedLevel}
-                        onRemove={() => setSelectedLevel("Tous")}
-                      />
-                    )}
-                    <button
-                      onClick={resetFilters}
-                      className="text-sm text-gray-500 hover:text-highlight transition-colors"
-                    >
-                      Réinitialiser tout
-                    </button>
-                  </motion.div>
-                )} */}
-              </AnimatePresence>
             </div>
           </div>
         </section>
 
         {/* Diffusions Grid */}
         <section className="max-w-9xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-          <div className="">
-            <form className="grid sm:grid-cols-1 lg:grid-cols-2  w-full">
-              <div className="flex flex-col gap-4 w-full sm:w-96 ">
-                <label
-                  htmlFor="name
+          <div className="p-4">
+            <form className="shadow-lg  rounded-lg max-w-4xl p-4 sm:p-6  ">
+              <div className="grid sm:grid-cols-1 lg:grid-cols-2  max-w-4xl p-4 sm:p-6  gap-4">
+                <div className="flex flex-col gap-4 w-full  lg:w-96  ">
+                  <label htmlFor="entrepriseLevel" className="text-sm">
+                    Entreprise Level :
+                  </label>
+
+                  <select
+                    name="entrepriselevel"
+                    id="entrepriselevel"
+                    className="w-full px-4 py-3 rounded-xl border-2 border-black/10 focus:border-highlight focus:ring-0 bg-white"
+                  >
+                    <option>Selectionnez une entreprise</option>
+                    <option>Test</option>
+                  </select>
+                </div>
+                <div className="flex flex-col gap-4 w-full  lg:w-96 ">
+                  <label htmlFor="name" className="text-sm">
+                    Nom :
+                  </label>
+                  <input
+                    type="text"
+                    id="nom"
+                    name="name"
+                    placeholder="ajouter le nom de l'entreprise..."
+                    className="w-full px-4 py-3 rounded-xl border-2 border-black/10 focus:border-highlight focus:ring-0 bg-white"
+                  />
+                </div>
+                <div className="flex flex-col gap-4 w-full  lg:w-96 ">
+                  <label htmlFor="rccm" className="text-sm">
+                    Rccm :
+                  </label>
+                  <input
+                    type="text"
+                    id="rccm"
+                    name="rccm"
+                    placeholder="ajouter le nom de l'entreprise..."
+                    className="w-full px-4 py-3 rounded-xl border-2 border-black/10 focus:border-highlight focus:ring-0 bg-white"
+                  />
+                </div>
+                <div className="flex flex-col gap-4 w-full  lg:w-96 ">
+                  <label htmlFor="nif" className="text-sm">
+                    Numéro d'Identification Fiscale (NIF) :
+                  </label>
+                  <input
+                    type="text"
+                    id="nif"
+                    name="nif"
+                    placeholder="ajouter le nom de l'entreprise..."
+                    className="w-full px-4 py-3 rounded-xl border-2 border-black/10 focus:border-highlight focus:ring-0 bg-white"
+                  />
+                </div>
+                <div className="flex flex-col gap-4 w-full  lg:w-96 ">
+                  <label htmlFor="email" className="text-sm">
+                    email :
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="saisir ton email..."
+                    className="w-full px-4 py-3 rounded-xl border-2 border-black/10 focus:border-highlight focus:ring-0 bg-white"
+                  />
+                </div>
+                <div className="flex flex-col gap-4 w-full  lg:w-96 ">
+                  <label
+                    htmlFor="siteweb
 "
-                >
-                  Nom :
-                </label>
-                <input
-                  type="text"
-                  id="nom"
-                  name="name"
-                  placeholder="ajouter le nom de l'entreprise..."
-                  className="w-full px-4 py-3 rounded-xl border-2 border-black/10 focus:border-highlight focus:ring-0 bg-white"
-                />
-              </div>
-              <div className="flex flex-col gap-4 w-full  sm:w-96 ">
-                <label
-                  htmlFor="name
+                    className="text-sm"
+                  >
+                    Siteweb :
+                  </label>
+                  <input
+                    type="text"
+                    id="siteweb"
+                    name="siteweb"
+                    placeholder="saisir ton siteweb..."
+                    className="w-full px-4 py-3 rounded-xl border-2 border-black/10 focus:border-highlight focus:ring-0 bg-white"
+                  />
+                </div>
+                <div className="flex flex-col gap-4 w-full  lg:w-96 ">
+                  <label
+                    htmlFor="siteweb
 "
-                >
-                  Nom :
-                </label>
-                <input
-                  type="text"
-                  id="nom"
-                  name="name"
-                  placeholder="ajouter le nom de l'entreprise..."
-                  className="w-full px-4 py-3 rounded-xl border-2 border-black/10 focus:border-highlight focus:ring-0 bg-white"
-                />
+                    className="text-sm"
+                  >
+                    Forme juridique :
+                  </label>
+                  <select
+                    name="legalForm"
+                    id="legalForm"
+                    className="w-full px-4 py-3 rounded-xl border-2 border-black/10 focus:border-gray-950 focus:ring-0 bg-white"
+                  >
+                    <option>Selectionnez une forme juridique</option>
+                    <option>Test</option>
+                  </select>
+                </div>
+                <div className="flex flex-col gap-4 w-full  lg:w-96 ">
+                  <label htmlFor="requestorFonction" className="text-sm">
+                    Fonction du demandeur :
+                  </label>
+                  <input
+                    type="text"
+                    id="requestorFonction"
+                    name="requestorFonction"
+                    placeholder="saisir ton siteweb..."
+                    className="w-full px-4 py-3 rounded-xl border-2 border-black/10 focus:border-gray-950 focus:ring-0 bg-white"
+                  />
+                </div>
+                <div className="flex flex-col gap-4 w-full  lg:w-96 ">
+                  <label htmlFor="requestorEmail" className="text-sm">
+                    E-mail du demandeur :
+                  </label>
+                  <input
+                    type="email"
+                    id="requestorEmail"
+                    name="requestorEmail"
+                    placeholder="saisir E-mail du demandeur..."
+                    className="w-full px-4 py-3 rounded-xl border-2 border-black/10 focus:border-gray-950 focus:ring-0 bg-white"
+                  />
+                </div>
+                <div className="flex flex-col gap-4 w-full  lg:w-96 ">
+                  <label htmlFor="requestorPhone" className="text-sm">
+                    Numéro de téléphone du demandeur :
+                  </label>
+                  <input
+                    type="email"
+                    id="requestorPhone"
+                    name="requestorPhone"
+                    placeholder="saisir E-mail du demandeur..."
+                    className="w-full px-4 py-3 rounded-xl border-2 border-black/10 focus:border-gray-950 focus:ring-0 bg-white"
+                  />
+                </div>
+                <div className="flex flex-col gap-4 w-full  lg:w-96 ">
+                  <label htmlFor="requestorPhone" className="text-sm">
+                    description :
+                  </label>
+                  <textarea
+                    id="description"
+                    placeholder="Description détaillée"
+                    rows={3}
+                    className="w-full px-4 py-3 rounded-xl border-2 border-black/10 focus:border-gray-950 focus:ring-0 bg-white"
+                  />
+                </div>
               </div>
-              <div className="flex flex-col gap-4 w-full  sm:w-96 ">
-                <label htmlFor="name">Nom :</label>
-                <input
-                  type="text"
-                  id="nom"
-                  name="name"
-                  placeholder="ajouter le nom de l'entreprise..."
-                  className="w-full px-4 py-3 rounded-xl border-2 border-black/10 focus:border-highlight focus:ring-0 bg-white"
-                />
+              <div className="p-4 sm:p-6">
+                <button
+                  type="submit"
+                  className="px-4 py-3 bg-highlight text-gray-100 rounded-lg"
+                >
+                  Sauvegarder
+                </button>
               </div>
             </form>
           </div>
