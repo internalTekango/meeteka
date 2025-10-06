@@ -30,66 +30,71 @@ import { FiscalitiesPage } from "./pages/FiscalitiesPage";
 import { FiscalityPost } from "./pages/FiscalityPost";
 import { Fiscality } from "./components/Fiscality";
 import { LandingPage } from "./pages/LandingPage";
+import ProductSubscription from "./components/ProductSubscription";
 
 export default function App() {
-	const pathname = window.location.pathname;
+  const pathname = window.location.pathname;
 
-	useEffect(
-		function () {
-			window.scrollTo(0, 0);
-		},
-		[pathname]
-	);
+  useEffect(
+    function () {
+      window.scrollTo(0, 0);
+    },
+    [pathname]
+  );
 
-	return (
-		<BrowserRouter>
-			<Layout>
-				<Routes>
-					<Route
-						path='/'
-						element={
-							<>
-								<Hero />
-								<Services />
-								<Fiscality />
-								<Diffusion />
-								<Team />
-								<Contact />
-							</>
-						}
-					/>
-					<Route path='/support' element={<SupportPage />} />
-					<Route path='/services/:slug' element={<ServiceDetails />} />
-					<Route
-						path='/politique-de-confidentialité'
-						element={<ConfidentialPolitique />}
-					/>
-					<Route path='/account-deletion' element={<AccountDeletion />} />
-					<Route path='/blogs' element={<BlogsPage />} />
-					<Route path='/blogs/:slug' element={<BlogPostDetails />} />
-					<Route path='/diffusions' element={<DiffusionsPage />} />
-					<Route path='/fiscalities' element={<FiscalitiesPage />} />
-					<Route path='/fiscalities/:slug' element={<FiscalityPost />} />
-					<Route path='/diffusions/:slug' element={<DiffusionPost />} />
-					<Route path='/missions' element={<MissionsPage />} />
-					<Route path='/missions/:slug' element={<MissionPost />} />
-					<Route path='/entreprises' element={<EntreprisesPage />} />
-					<Route path='/entreprises/:slug' element={<PartnerDetails />} />
-					<Route path='/organisations' element={<OrganisationsPage />} />
-					<Route path='/events' element={<EventsPage />} />
-					<Route path='/events/:slug' element={<EventPost />} />
-					<Route path='/organisations/:slug' element={<PartnerDetails />} />
-					<Route path='/success-stories' element={<SuccessStoriesPage />} />
-					<Route
-						path='/success-stories/:slug'
-						element={<SuccessStoryDetails />}
-					/>
-					<Route path='/about' element={<AboutPage />} />
-					<Route path='/profile/:slug' element={<ProfilePost />} />
-					<Route path='/pricing' element={<PricingPage />} />
-					<Route path='/landing' element={<LandingPage />} />
-				</Routes>
-			</Layout>
-		</BrowserRouter>
-	);
+  return (
+    <BrowserRouter>
+      <Layout>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <>
+                <Hero />
+                <Services />
+                <Fiscality />
+                <Diffusion />
+                <Team />
+                <Contact />
+              </>
+            }
+          />
+          <Route path="/support" element={<SupportPage />} />
+          <Route path="/services/:slug" element={<ServiceDetails />} />
+          <Route
+            path="/politique-de-confidentialité"
+            element={<ConfidentialPolitique />}
+          />
+          <Route path="/account-deletion" element={<AccountDeletion />} />
+          <Route path="/blogs" element={<BlogsPage />} />
+          <Route path="/blogs/:slug" element={<BlogPostDetails />} />
+          <Route path="/diffusions" element={<DiffusionsPage />} />
+          <Route path="/fiscalities" element={<FiscalitiesPage />} />
+          <Route path="/fiscalities/:slug" element={<FiscalityPost />} />
+          <Route
+            path="/product-subscription"
+            element={<ProductSubscription />}
+          />
+          <Route path="/diffusions/:slug" element={<DiffusionPost />} />
+          <Route path="/missions" element={<MissionsPage />} />
+          <Route path="/missions/:slug" element={<MissionPost />} />
+          <Route path="/entreprises" element={<EntreprisesPage />} />
+          <Route path="/entreprises/:slug" element={<PartnerDetails />} />
+          <Route path="/organisations" element={<OrganisationsPage />} />
+          <Route path="/events" element={<EventsPage />} />
+          <Route path="/events/:slug" element={<EventPost />} />
+          <Route path="/organisations/:slug" element={<PartnerDetails />} />
+          <Route path="/success-stories" element={<SuccessStoriesPage />} />
+          <Route
+            path="/success-stories/:slug"
+            element={<SuccessStoryDetails />}
+          />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/profile/:slug" element={<ProfilePost />} />
+          <Route path="/pricing" element={<PricingPage />} />
+          <Route path="/landing" element={<LandingPage />} />
+        </Routes>
+      </Layout>
+    </BrowserRouter>
+  );
 }
