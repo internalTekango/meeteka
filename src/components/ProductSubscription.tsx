@@ -15,11 +15,9 @@ export default function ProductSubscription() {
     uri: "infos-user/legal-form/get",
   });
 
-  const { fetch: fetchEntrepriseLevel, loading: isLoadingLevel } = useFetchData(
-    {
-      uri: "infos-user/entreprise-level/get",
-    }
-  );
+  const { fetch: fetchEntrepriseLevel } = useFetchData({
+    uri: "infos-user/entreprise-level/get",
+  });
 
   const [entrepriseLevels, setEntrepriseLevels] = useState<any[]>([]);
   const [legalForms, setLegalForms] = useState<any[]>([]);
