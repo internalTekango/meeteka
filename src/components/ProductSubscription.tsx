@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Search, Filter, X, Plus, PlusCircle } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 import { useFetchData } from "../../hooks/useFetchData";
 import { LoadingCard } from "../components/LoadingCard";
 import { EmptyState } from "../components/EmptyState";
@@ -16,106 +16,80 @@ import {
   SelectValue,
 } from "./ui/select";
 
-interface FilterButtonProps {
-  label: string;
-  isActive: boolean;
-  onClick: () => void;
-  className?: string;
-}
-
-const FilterButton: React.FC<FilterButtonProps> = ({
-  label,
-  isActive,
-  onClick,
-  className = "",
-}) => (
-  <button
-    onClick={onClick}
-    className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-300 ${
-      isActive
-        ? "bg-highlight text-white shadow-lg scale-105"
-        : "bg-white hover:bg-gray-100"
-    } ${className}`}
-  >
-    {label}
-  </button>
-);
-
-const FilterSection: React.FC<{
-  title: string;
-  options: any[];
-  selected: string;
-  onChange: (value: string) => void;
-}> = ({ title, options, selected, onChange }) => (
-  <div className="space-y-3">
-    <h3 className="text-sm font-semibold text-gray-700">{title}</h3>
-    <div className="flex flex-wrap gap-2">
-      {options.map((option) => (
-        <FilterButton
-          key={option?.value}
-          label={option?.label}
-          isActive={selected === option?.value}
-          onClick={() => onChange(option?.value)}
-        />
-      ))}
-    </div>
-  </div>
-);
-
 export default function ProductSubscription() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [entrepriseLevelFilter, setEntrepriseLevelFilter] =
-    useState<string>("");
   const [entrepriseLevel, setEntrepriseLevel] = useState<any[]>([]);
-  const [selectedType, setSelectedType] = useState("Tous");
-  const [selectedLevel, setSelectedLevel] = useState("Tous");
-  const [showFilters, setShowFilters] = useState(false);
+
   const { t } = useLanguage();
-  const { fetch: fetchDiffusions, loading: isLoading } = useFetchData({
+  const { fetch: fetchCreateProduct, loading: isLoading } = useFetchData({
     uri: "infos-user/product-entreprise/create",
   });
+  const { fetch: fetchLegalform } = useFetchData({
+    uri: "infos-user/legal-form/get",
+  });
+  const [legalForms, setLegalForms] = useState<any[]>([]);
 
   useEffect(() => {
     (async function () {
-      const { data } = await fetchDiffusions({}, "POST");
+      const { data } = await fetchLegalform({}, "GET");
+
       if (data?.data) {
-        // setMissions(data.data);
+        setLegalForms(data.data);
       }
     })();
   }, []);
+  console.log(legalForms);
+  const [formData, setFormData] = useState({
+    name: "",
+    rccm: "",
+    nif: "",
+    email: "",
+    siteweb: "",
+    legalForm: "",
+    requestorFonction: "",
+    requestorEmail: "",
+    requestorPhone: "",
+    description: "",
+    entrepriseLevel: "",
+  });
 
-  //   const filteredDiffusions = missions.filter((post) => {
-  //     const matchesSearch = post.title
-  //       .toLowerCase()
-  //       .includes(searchTerm.toLowerCase());
-  //     const matchesType = selectedType === "Tous" || post.type === selectedType;
-  //     const matchesLevel =
-  //       selectedLevel === "Tous" || post.level === selectedLevel;
-  //     return matchesSearch && matchesType && matchesLevel;
-  //   });
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => {
+    const { name, value } = e.target;
 
-  //   const hasActiveFilters = selectedType !== "Tous" || selectedLevel !== "Tous";
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
-  //   const resetFilters = () => {
-  //     setSearchTerm("");
-  //     setSelectedType("Tous");
-  //     setSelectedLevel("Tous");
-  //   };
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-  //   const ActiveFilterPill: React.FC<{ label: string; onRemove: () => void }> = ({
-  //     label,
-  //     onRemove,
-  //   }) => (
-  //     <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-highlight/10 text-highlight rounded-full text-sm font-medium">
-  //       {label}
-  //       <button
-  //         onClick={onRemove}
-  //         className="p-0.5 rounded-full hover:bg-highlight hover:text-white transition-colors"
-  //       >
-  //         <X className="w-3 h-3" />
-  //       </button>
-  //     </span>
-  //   );
+    const { data, error } = await fetchCreateProduct(formData, "POST");
+    if (error) {
+      console.error("Erreur lors de la création de l'entreprise:", error);
+
+      return;
+    }
+    console.log("donnée attendu", data);
+    // Réinitialiser le formulaire
+    setFormData({
+      name: "",
+      rccm: "",
+      nif: "",
+      email: "",
+      siteweb: "",
+      legalForm: "",
+      requestorFonction: "",
+      requestorEmail: "",
+      requestorPhone: "",
+      description: "",
+      entrepriseLevel: "",
+    });
+  };
 
   return (
     <PageTransition>
@@ -157,22 +131,6 @@ export default function ProductSubscription() {
               {/* Search and Filter Toggle */}
               <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
                 <div className="relative w-full sm:w-96">
-                  {/* <input
-                    type="text"
-                    placeholder="Rechercher une mission..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full px-4 py-3 pl-12 rounded-xl border-2 border-black/10 focus:border-highlight focus:ring-0 bg-white"
-                  />
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  {searchTerm && (
-                    <button
-                      onClick={() => setSearchTerm("")}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-gray-100"
-                    >
-                      <X className="w-4 h-4 text-gray-400" />
-                    </button>
-                  )} */}
                   <h1 className="flex items-center gap-4 font-bold">
                     {" "}
                     <PlusCircle className="w-4 h-4 md:w-6 md:h-6" />
@@ -189,7 +147,10 @@ export default function ProductSubscription() {
         {/* Diffusions Grid */}
         <section className="max-w-9xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
           <div className="p-4">
-            <form className="shadow-lg  rounded-lg max-w-4xl p-4 sm:p-6  ">
+            <form
+              onSubmit={handleSubmit}
+              className="shadow-lg  rounded-lg max-w-4xl p-4 sm:p-6  "
+            >
               <div className="grid sm:grid-cols-1 lg:grid-cols-2  max-w-4xl p-4 sm:p-6  gap-4">
                 <div className="flex flex-col gap-4 w-full  lg:w-96  ">
                   <label htmlFor="entrepriseLevel" className="text-sm">
@@ -197,9 +158,11 @@ export default function ProductSubscription() {
                   </label>
 
                   <select
+                    value={formData.entrepriseLevel}
+                    onChange={handleChange}
                     name="entrepriselevel"
                     id="entrepriselevel"
-                    className="w-full px-4 py-3 rounded-xl border-2 border-black/10 focus:border-highlight focus:ring-0 bg-white"
+                    className="w-full px-4 py-3 rounded-xl border-2 border-black/10 focus:border-gray-950 focus:ring-0 bg-white"
                   >
                     <option>Selectionnez une entreprise</option>
                     <option>Test</option>
@@ -212,8 +175,10 @@ export default function ProductSubscription() {
                   <input
                     type="text"
                     id="nom"
+                    value={formData.name}
+                    onChange={handleChange}
                     name="name"
-                    placeholder="ajouter le nom de l'entreprise..."
+                    placeholder="Saisir le nom de l'entreprise..."
                     className="w-full px-4 py-3 rounded-xl border-2 border-black/10 focus:border-highlight focus:ring-0 bg-white"
                   />
                 </div>
@@ -225,7 +190,9 @@ export default function ProductSubscription() {
                     type="text"
                     id="rccm"
                     name="rccm"
-                    placeholder="ajouter le nom de l'entreprise..."
+                    value={formData.rccm}
+                    onChange={handleChange}
+                    placeholder="Saisir le rccm..."
                     className="w-full px-4 py-3 rounded-xl border-2 border-black/10 focus:border-highlight focus:ring-0 bg-white"
                   />
                 </div>
@@ -236,8 +203,10 @@ export default function ProductSubscription() {
                   <input
                     type="text"
                     id="nif"
+                    value={formData.nif}
+                    onChange={handleChange}
                     name="nif"
-                    placeholder="ajouter le nom de l'entreprise..."
+                    placeholder="saisir le numero d'identification Fiscale..."
                     className="w-full px-4 py-3 rounded-xl border-2 border-black/10 focus:border-highlight focus:ring-0 bg-white"
                   />
                 </div>
@@ -249,6 +218,8 @@ export default function ProductSubscription() {
                     type="email"
                     id="email"
                     name="email"
+                    value={formData.email}
+                    onChange={handleChange}
                     placeholder="saisir ton email..."
                     className="w-full px-4 py-3 rounded-xl border-2 border-black/10 focus:border-highlight focus:ring-0 bg-white"
                   />
@@ -265,6 +236,8 @@ export default function ProductSubscription() {
                     type="text"
                     id="siteweb"
                     name="siteweb"
+                    value={formData.siteweb}
+                    onChange={handleChange}
                     placeholder="saisir ton siteweb..."
                     className="w-full px-4 py-3 rounded-xl border-2 border-black/10 focus:border-highlight focus:ring-0 bg-white"
                   />
@@ -280,10 +253,16 @@ export default function ProductSubscription() {
                   <select
                     name="legalForm"
                     id="legalForm"
+                    value={formData.legalForm}
+                    onChange={handleChange}
                     className="w-full px-4 py-3 rounded-xl border-2 border-black/10 focus:border-gray-950 focus:ring-0 bg-white"
                   >
                     <option>Selectionnez une forme juridique</option>
-                    <option>Test</option>
+                    {legalForms.map((form) => (
+                      <option key={form.id} value={form.id}>
+                        {form.name}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div className="flex flex-col gap-4 w-full  lg:w-96 ">
@@ -294,7 +273,9 @@ export default function ProductSubscription() {
                     type="text"
                     id="requestorFonction"
                     name="requestorFonction"
-                    placeholder="saisir ton siteweb..."
+                    value={formData.requestorFonction}
+                    onChange={handleChange}
+                    placeholder="saisir ta fonction..."
                     className="w-full px-4 py-3 rounded-xl border-2 border-black/10 focus:border-gray-950 focus:ring-0 bg-white"
                   />
                 </div>
@@ -306,6 +287,8 @@ export default function ProductSubscription() {
                     type="email"
                     id="requestorEmail"
                     name="requestorEmail"
+                    value={formData.requestorEmail}
+                    onChange={handleChange}
                     placeholder="saisir E-mail du demandeur..."
                     className="w-full px-4 py-3 rounded-xl border-2 border-black/10 focus:border-gray-950 focus:ring-0 bg-white"
                   />
@@ -315,20 +298,25 @@ export default function ProductSubscription() {
                     Numéro de téléphone du demandeur :
                   </label>
                   <input
-                    type="email"
+                    type="text"
                     id="requestorPhone"
                     name="requestorPhone"
-                    placeholder="saisir E-mail du demandeur..."
+                    value={formData.requestorPhone}
+                    onChange={handleChange}
+                    placeholder="saisir le numero du demandeur..."
                     className="w-full px-4 py-3 rounded-xl border-2 border-black/10 focus:border-gray-950 focus:ring-0 bg-white"
                   />
                 </div>
                 <div className="flex flex-col gap-4 w-full  lg:w-96 ">
-                  <label htmlFor="requestorPhone" className="text-sm">
-                    description :
+                  <label htmlFor="description" className="text-sm">
+                    Description :
                   </label>
                   <textarea
+                    name="desciption"
                     id="description"
                     placeholder="Description détaillée"
+                    value={formData.description}
+                    onChange={handleChange}
                     rows={3}
                     className="w-full px-4 py-3 rounded-xl border-2 border-black/10 focus:border-gray-950 focus:ring-0 bg-white"
                   />
@@ -337,35 +325,14 @@ export default function ProductSubscription() {
               <div className="p-4 sm:p-6">
                 <button
                   type="submit"
+                  disabled={isLoading}
                   className="px-4 py-3 bg-highlight text-gray-100 rounded-lg"
                 >
-                  Sauvegarder
+                  {isLoading ? "Envoie en cours..." : " Sauvegarder"}
                 </button>
               </div>
             </form>
           </div>
-          {/* {isLoading ? (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-              {[...Array(8)].map((_, index) => (
-                <LoadingCard key={index} />
-              ))}
-            </div>
-          ) : filteredDiffusions.length === 0 ? (
-            <EmptyState
-              title="Aucune mission trouvée"
-              description="Nous n'avons trouvé aucune mission correspondant à vos critères de recherche. Essayez de modifier vos filtres ou d'effectuer une nouvelle recherche."
-              action={{
-                label: "Réinitialiser les filtres",
-                onClick: resetFilters,
-              }}
-            />
-          ) : (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-              {filteredDiffusions.map((post, index) => (
-                <CardMission {...post} key={index} />
-              ))}
-            </div>
-          )} */}
         </section>
       </div>
     </PageTransition>
