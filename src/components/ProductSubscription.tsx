@@ -1,20 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { PlusCircle } from "lucide-react";
 import { useFetchData } from "../../hooks/useFetchData";
-import { LoadingCard } from "../components/LoadingCard";
-import { EmptyState } from "../components/EmptyState";
+
 import { PageTransition } from "../components/PageTransition";
-import { motion, AnimatePresence } from "framer-motion";
+
 import { useLanguage } from "../context/LanguageContext";
-import CardMission from "../components/card/mission";
-import { LEVELS } from "../../config";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
 
 export default function ProductSubscription() {
   const [entrepriseLevel, setEntrepriseLevel] = useState<any[]>([]);
