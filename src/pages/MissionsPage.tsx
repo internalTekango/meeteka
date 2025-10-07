@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { Search, Filter, X } from 'lucide-react';
-import { useFetchData } from "../../hooks/useFetchData"
-import { LoadingCard } from '../components/LoadingCard';
-import { EmptyState } from '../components/EmptyState';
-import { PageTransition } from '../components/PageTransition';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useLanguage } from '../context/LanguageContext';
-import CardMission from '../components/card/mission';
-import { LEVELS } from '../../config';
+import React, { useState, useEffect } from "react";
+import { Search, X } from "lucide-react";
+import { useFetchData } from "../../hooks/useFetchData";
+import { LoadingCard } from "../components/LoadingCard";
+import { EmptyState } from "../components/EmptyState";
+import { PageTransition } from "../components/PageTransition";
+import { motion, AnimatePresence } from "framer-motion";
+import { useLanguage } from "../context/LanguageContext";
+import CardMission from "../components/card/mission";
+import { LEVELS } from "../../config";
 
 interface FilterButtonProps {
   label: string;
@@ -16,13 +16,19 @@ interface FilterButtonProps {
   className?: string;
 }
 
-const FilterButton: React.FC<FilterButtonProps> = ({ label, isActive, onClick, className = '' }) => (
+const FilterButton: React.FC<FilterButtonProps> = ({
+  label,
+  isActive,
+  onClick,
+  className = "",
+}) => (
   <button
     onClick={onClick}
-    className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-300 ${isActive
-      ? 'bg-highlight text-white shadow-lg scale-105'
-      : 'bg-white hover:bg-gray-100'
-      } ${className}`}
+    className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-300 ${
+      isActive
+        ? "bg-highlight text-white shadow-lg scale-105"
+        : "bg-white hover:bg-gray-100"
+    } ${className}`}
   >
     {label}
   </button>
@@ -50,40 +56,47 @@ const FilterSection: React.FC<{
 );
 
 export function MissionsPage() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [missions, setMissions] = useState<any[]>([])
-  const [selectedType, setSelectedType] = useState('Tous');
-  const [selectedLevel, setSelectedLevel] = useState('Tous');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [missions, setMissions] = useState<any[]>([]);
+  const [selectedType, setSelectedType] = useState("Tous");
+  const [selectedLevel, setSelectedLevel] = useState("Tous");
   const [showFilters, setShowFilters] = useState(false);
-  const { t } = useLanguage()
-  const { fetch: fetchDiffusions, loading: isLoading } = useFetchData({ uri: "infos-user/connection/get" })
+  const { t } = useLanguage();
+  const { fetch: fetchDiffusions, loading: isLoading } = useFetchData({
+    uri: "infos-user/connection/get",
+  });
 
   useEffect(() => {
     (async function () {
-      const { data } = await fetchDiffusions({}, "POST")
+      const { data } = await fetchDiffusions({}, "POST");
       if (data?.data) {
-        setMissions(data.data)
+        setMissions(data.data);
       }
-    })()
-
+    })();
   }, []);
 
-  const filteredDiffusions = missions.filter(post => {
-    const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesType = selectedType === 'Tous' || post.type === selectedType;
-    const matchesLevel = selectedLevel === 'Tous' || post.level === selectedLevel;
+  const filteredDiffusions = missions.filter((post) => {
+    const matchesSearch = post.title
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesType = selectedType === "Tous" || post.type === selectedType;
+    const matchesLevel =
+      selectedLevel === "Tous" || post.level === selectedLevel;
     return matchesSearch && matchesType && matchesLevel;
   });
 
-  const hasActiveFilters = selectedType !== 'Tous' || selectedLevel !== 'Tous';
+  const hasActiveFilters = selectedType !== "Tous" || selectedLevel !== "Tous";
 
   const resetFilters = () => {
-    setSearchTerm('');
-    setSelectedType('Tous');
-    setSelectedLevel('Tous');
+    setSearchTerm("");
+    setSelectedType("Tous");
+    setSelectedLevel("Tous");
   };
 
-  const ActiveFilterPill: React.FC<{ label: string; onRemove: () => void }> = ({ label, onRemove }) => (
+  const ActiveFilterPill: React.FC<{ label: string; onRemove: () => void }> = ({
+    label,
+    onRemove,
+  }) => (
     <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-highlight/10 text-highlight rounded-full text-sm font-medium">
       {label}
       <button
@@ -102,13 +115,24 @@ export function MissionsPage() {
         <section className="bg-black text-white py-12 sm:py-16 lg:py-20">
           <div className="max-w-9xl mx-auto px-4 sm:px-6 lg:px-8">
             <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 sm:mb-6">
-              {t("missions.banner.title").split(" ").map(function (element, index: number) {
-                if (index == 0) {
-                  return <span className="w-fit hidden" key={index}>{element}</span>
-                } else {
-                  return <span key={index} className="text-highlight"> {element}</span>
-                }
-              })}
+              {t("missions.banner.title")
+                .split(" ")
+                .map(function (element, index: number) {
+                  if (index == 0) {
+                    return (
+                      <span className="w-fit hidden" key={index}>
+                        {element}
+                      </span>
+                    );
+                  } else {
+                    return (
+                      <span key={index} className="text-highlight">
+                        {" "}
+                        {element}
+                      </span>
+                    );
+                  }
+                })}
             </h1>
             <p className="text-lg sm:text-xl text-gray-300 max-w-4xl">
               {t("missions.banner.description")}
@@ -133,7 +157,7 @@ export function MissionsPage() {
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                   {searchTerm && (
                     <button
-                      onClick={() => setSearchTerm('')}
+                      onClick={() => setSearchTerm("")}
                       className="absolute right-4 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-gray-100"
                     >
                       <X className="w-4 h-4 text-gray-400" />
@@ -157,7 +181,7 @@ export function MissionsPage() {
                 {showFilters && (
                   <motion.div
                     initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
+                    animate={{ opacity: 1, height: "auto" }}
                     exit={{ opacity: 0, height: 0 }}
                     transition={{ duration: 0.3 }}
                     className="overflow-hidden"
@@ -183,18 +207,20 @@ export function MissionsPage() {
                     exit={{ opacity: 0, y: -10 }}
                     className="flex flex-wrap items-center gap-2"
                   >
-                    <span className="text-sm text-gray-500">Filtres actifs:</span>
+                    <span className="text-sm text-gray-500">
+                      Filtres actifs:
+                    </span>
 
-                    {selectedType !== 'Tous' && (
+                    {selectedType !== "Tous" && (
                       <ActiveFilterPill
                         label={selectedType}
-                        onRemove={() => setSelectedType('Tous')}
+                        onRemove={() => setSelectedType("Tous")}
                       />
                     )}
-                    {selectedLevel !== 'Tous' && (
+                    {selectedLevel !== "Tous" && (
                       <ActiveFilterPill
                         label={selectedLevel}
-                        onRemove={() => setSelectedLevel('Tous')}
+                        onRemove={() => setSelectedLevel("Tous")}
                       />
                     )}
                     <button
@@ -224,7 +250,7 @@ export function MissionsPage() {
               description="Nous n'avons trouvé aucune mission correspondant à vos critères de recherche. Essayez de modifier vos filtres ou d'effectuer une nouvelle recherche."
               action={{
                 label: "Réinitialiser les filtres",
-                onClick: resetFilters
+                onClick: resetFilters,
               }}
             />
           ) : (

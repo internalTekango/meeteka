@@ -7,8 +7,6 @@ import { PageTransition } from "../components/PageTransition";
 import { useLanguage } from "../context/LanguageContext";
 
 export default function ProductSubscription() {
-  const [entrepriseLevel, setEntrepriseLevel] = useState<any[]>([]);
-
   const { t } = useLanguage();
   const { fetch: fetchCreateProduct, loading: isLoading } = useFetchData({
     uri: "infos-user/product-entreprise/create",
@@ -16,18 +14,35 @@ export default function ProductSubscription() {
   const { fetch: fetchLegalform } = useFetchData({
     uri: "infos-user/legal-form/get",
   });
+
+  const { fetch: fetchEntrepriseLevel, loading: isLoadingLevel } = useFetchData(
+    {
+      uri: "infos-user/entreprise-level/get",
+    }
+  );
+
+  const [entrepriseLevels, setEntrepriseLevels] = useState<any[]>([]);
   const [legalForms, setLegalForms] = useState<any[]>([]);
 
   useEffect(() => {
     (async function () {
-      const { data } = await fetchLegalform({}, "GET");
+      const { data } = await fetchEntrepriseLevel({}, "POST");
+      if (data?.data) {
+        setEntrepriseLevels(data.data);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async function () {
+      const { data } = await fetchLegalform({}, "POST");
 
       if (data?.data) {
         setLegalForms(data.data);
       }
     })();
   }, []);
-  console.log(legalForms);
+  console.log(entrepriseLevels);
   const [formData, setFormData] = useState({
     name: "",
     rccm: "",
@@ -88,24 +103,6 @@ export default function ProductSubscription() {
         <section className="bg-black text-white py-12 sm:py-16 lg:py-20">
           <div className="max-w-9xl mx-auto px-4 sm:px-6 lg:px-8">
             <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 sm:mb-6">
-              {/* {t("missions.banner.title")
-                .split(" ")
-                .map(function (element, index: number) {
-                  if (index == 0) {
-                    return (
-                      <span className="w-fit hidden" key={index}>
-                        {element}
-                      </span>
-                    );
-                  } else {
-                    return (
-                      <span key={index} className="text-highlight">
-                        {" "}
-                        {element}
-                      </span>
-                    );
-                  }
-                })} */}
               Subscription
             </h1>
             <p className="text-lg sm:text-xl text-gray-300 max-w-4xl">
@@ -148,14 +145,18 @@ export default function ProductSubscription() {
                   </label>
 
                   <select
+                    id="entrepriseLevel"
                     value={formData.entrepriseLevel}
                     onChange={handleChange}
-                    name="entrepriselevel"
-                    id="entrepriselevel"
+                    name="entrepriseLevel"
                     className="w-full px-4 py-3 rounded-xl border-2 border-black/10 focus:border-gray-950 focus:ring-0 bg-white"
                   >
                     <option>Selectionnez une entreprise</option>
-                    <option>Test</option>
+                    {entrepriseLevels.map((ent) => (
+                      <option key={ent.id} value={ent.id}>
+                        {ent.name}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div className="flex flex-col gap-4 w-full  lg:w-96 ">
@@ -302,7 +303,7 @@ export default function ProductSubscription() {
                     Description :
                   </label>
                   <textarea
-                    name="desciption"
+                    name="description"
                     id="description"
                     placeholder="Description détaillée"
                     value={formData.description}
